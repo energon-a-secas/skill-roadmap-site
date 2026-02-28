@@ -40,3 +40,7 @@ assets/icons   skill icons for the game card layout
 ```
 
 State saves automatically to `localStorage`.
+
+## Live
+
+→ [ehq.cl](https://ehq.cl/)

@@ -112,6 +112,7 @@ let state = defaultState();
 let selectedEdgeId = null;
 let connectionMode = null; // { sourceNodeId, sourcePortSide }
 let pointerDrag = null; // pointer-based drag state
+let _colRenderController = null; // aborted each render to clean up per-element listeners
 
 /* ===== ID GENERATOR ===== */
 let _idCounter = Date.now();
@@ -195,6 +196,11 @@ function renderAll() {
 }
 
 function renderColumns() {
+  // Abort previous render's listeners so detached elements can be GCed cleanly
+  if (_colRenderController) _colRenderController.abort();
+  _colRenderController = new AbortController();
+  const sig = _colRenderController.signal;
+
   const headerRow = document.getElementById('column-header-row');
   const colArea = document.getElementById('column-area');
 
@@ -225,11 +231,11 @@ function renderColumns() {
       titleEl.textContent = newName;
       col.name = newName;
       saveState();
-    });
+    }, { signal: sig });
     titleEl.addEventListener('keydown', e => {
       if (e.key === 'Enter') { e.preventDefault(); titleEl.blur(); }
-    });
-    titleEl.addEventListener('click', e => e.stopPropagation());
+    }, { signal: sig });
+    titleEl.addEventListener('click', e => e.stopPropagation(), { signal: sig });
 
     const delBtn = document.createElement('button');
     delBtn.className = 'column-delete-btn';
@@ -238,7 +244,7 @@ function renderColumns() {
     delBtn.addEventListener('click', e => {
       e.stopPropagation();
       deleteColumn(col.id);
-    });
+    }, { signal: sig });
 
     header.appendChild(titleEl);
     header.appendChild(delBtn);
@@ -268,10 +274,10 @@ function renderColumns() {
       laneHeader.addEventListener('blur', () => {
         lane.name = laneHeader.textContent.trim();
         saveState();
-      });
+      }, { signal: sig });
       laneHeader.addEventListener('keydown', e => {
         if (e.key === 'Enter') { e.preventDefault(); laneHeader.blur(); }
-      });
+      }, { signal: sig });
       laneHeadRow.appendChild(laneHeader);
 
       if (col.lanes.length > 1) {
@@ -279,7 +285,7 @@ function renderColumns() {
         delLaneBtn.className = 'btn-del-lane';
         delLaneBtn.title = 'Delete path';
         delLaneBtn.innerHTML = '×';
-        delLaneBtn.addEventListener('click', e => { e.stopPropagation(); deleteLane(col.id, lane.id); });
+        delLaneBtn.addEventListener('click', e => { e.stopPropagation(); deleteLane(col.id, lane.id); }, { signal: sig });
         laneHeadRow.appendChild(delLaneBtn);
       }
 
@@ -310,7 +316,7 @@ function renderColumns() {
       const addBtn = document.createElement('button');
       addBtn.className = 'btn-add-node';
       addBtn.innerHTML = `<svg viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Add Node`;
-      addBtn.addEventListener('click', () => addNode(col.id, lane.id));
+      addBtn.addEventListener('click', () => addNode(col.id, lane.id), { signal: sig });
       laneEl.appendChild(addBtn);
 
       body.appendChild(laneEl);
@@ -321,7 +327,7 @@ function renderColumns() {
     addLaneBtn.className = 'btn-add-lane';
     addLaneBtn.title = 'Add parallel path';
     addLaneBtn.textContent = '+';
-    addLaneBtn.addEventListener('click', () => addLane(col.id));
+    addLaneBtn.addEventListener('click', () => addLane(col.id), { signal: sig });
     body.appendChild(addLaneBtn);
 
     // Dynamic column width based on lane count
@@ -341,7 +347,7 @@ function renderColumns() {
   addColBtn.id = 'add-column-btn';
   addColBtn.innerHTML = `<svg viewBox="0 0 16 16" fill="none" style="width:18px;height:18px"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
   addColBtn.title = 'Add column';
-  addColBtn.addEventListener('click', addColumn);
+  addColBtn.addEventListener('click', addColumn, { signal: sig });
   colArea.appendChild(addColBtn);
 
   updateLockedStates();
@@ -389,7 +395,7 @@ function buildNodeElement(node) {
     e.preventDefault();
     e.stopPropagation();
     startPointerDrag(e, node.id);
-  });
+  }, { signal: _colRenderController?.signal });
   el.appendChild(handle);
 
   // Markers (position: absolute — works for both layouts)
@@ -677,7 +683,8 @@ function renderMarkerLegend() {
 
     const iconEl = document.createElement('span');
     iconEl.className = 'marker-icon';
-    iconEl.innerHTML = MARKER_ICONS[key] || key[0];
+    if (MARKER_ICONS[key]) { iconEl.innerHTML = MARKER_ICONS[key]; }
+    else { iconEl.textContent = key[0].toUpperCase(); }
 
     const labelInput = document.createElement('input');
     labelInput.type = 'text';
@@ -980,17 +987,18 @@ function onPointerDragEnd() {
   if (!pointerDrag) return;
   const { nodeId, ghost, el, dropColId, dropLaneId, dropBeforeId } = pointerDrag;
 
-  ghost.remove();
-  el.classList.remove('drag-source');
-  document.querySelectorAll('.drop-indicator').forEach(i => i.remove());
-  document.querySelectorAll('.lane.drag-target, .column-body.drag-target').forEach(b => b.classList.remove('drag-target'));
-
-  document.removeEventListener('pointermove', onPointerDragMove);
-  document.removeEventListener('pointerup',   onPointerDragEnd);
-  document.removeEventListener('pointercancel', onPointerDragEnd);
-  pointerDrag = null;
-
-  applyPointerDrop(nodeId, dropColId, dropLaneId, dropBeforeId);
+  try {
+    ghost.remove();
+    el.classList.remove('drag-source');
+    document.querySelectorAll('.drop-indicator').forEach(i => i.remove());
+    document.querySelectorAll('.lane.drag-target, .column-body.drag-target').forEach(b => b.classList.remove('drag-target'));
+    applyPointerDrop(nodeId, dropColId, dropLaneId, dropBeforeId);
+  } finally {
+    document.removeEventListener('pointermove', onPointerDragMove);
+    document.removeEventListener('pointerup',   onPointerDragEnd);
+    document.removeEventListener('pointercancel', onPointerDragEnd);
+    pointerDrag = null;
+  }
 }
 
 function applyPointerDrop(nodeId, targetColId, targetLaneId, dropBeforeId) {
@@ -1426,7 +1434,8 @@ function showNodeContextMenu(nodeId, x, y) {
   Object.keys(state.markerLegend).forEach(key => {
     const btn = document.createElement('button');
     btn.className = 'ctx-marker-btn' + (node.markers.includes(key) ? ' active' : '');
-    btn.innerHTML = MARKER_ICONS[key] || key[0];
+    if (MARKER_ICONS[key]) { btn.innerHTML = MARKER_ICONS[key]; }
+    else { btn.textContent = key[0].toUpperCase(); }
     btn.title = state.markerLegend[key];
     btn.addEventListener('click', () => {
       toggleNodeMarker(nodeId, key);
@@ -1546,7 +1555,11 @@ function showNodeContextMenu(nodeId, x, y) {
 function appendCtxItem(parent, icon, label, onClick, isDanger = false) {
   const item = document.createElement('div');
   item.className = 'ctx-item' + (isDanger ? ' danger' : '');
-  item.innerHTML = `<span style="font-size:14px">${icon}</span> ${label}`;
+  const iconSpan = document.createElement('span');
+  iconSpan.style.fontSize = '14px';
+  iconSpan.innerHTML = icon; // always an emoji or internal FA tag
+  item.appendChild(iconSpan);
+  item.appendChild(document.createTextNode(' ' + label));
   item.addEventListener('click', onClick);
   parent.appendChild(item);
 }
@@ -1787,11 +1800,16 @@ function showToast(message, icon = 'ℹ️', duration = 2500) {
   const container = document.getElementById('toast-container');
   const toast = document.createElement('div');
   toast.className = 'toast';
-  toast.innerHTML = `<span class="toast-icon">${icon}</span>${message}`;
+  const iconSpan = document.createElement('span');
+  iconSpan.className = 'toast-icon';
+  iconSpan.innerHTML = icon; // always an emoji or internal FA tag
+  toast.appendChild(iconSpan);
+  toast.appendChild(document.createTextNode(message));
   container.appendChild(toast);
   setTimeout(() => {
     toast.classList.add('out');
-    toast.addEventListener('animationend', () => toast.remove());
+    toast.addEventListener('animationend', () => toast.remove(), { once: true });
+    setTimeout(() => toast.remove(), 300); // fallback when animations are disabled
   }, duration);
 }
 
