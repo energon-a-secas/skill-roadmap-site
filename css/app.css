@@ -17,7 +17,7 @@ input, textarea { font: inherit; }
   --border-active: rgba(255,255,255,0.25);
   --text-primary: #f9f9f9;
   --text-secondary: #cacaca;
-  --text-muted: rgba(255,255,255,0.45);
+  --text-muted: rgba(255,255,255,0.55);
   --accent: #0063e5;
   --accent-bright: #0080ff;
   --success: #22c55e;
@@ -93,7 +93,7 @@ html, body {
   gap: 8px;
   padding: 0 16px;
   height: var(--header-height);
-  background: linear-gradient(135deg, #B015B0 0%, #3D0080 45%, #080010 100%);
+  background: linear-gradient(in oklch 135deg, #B015B0 0%, #3D0080 50%, #040714 100%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   backdrop-filter: blur(12px);
   flex-shrink: 0;
@@ -1173,6 +1173,27 @@ html, body {
   padding: 0 4px;
 }
 .btn-add-lane:hover { border-color: var(--accent); color: var(--accent-bright); background: rgba(0,99,229,0.05); }
+
+/* ===== ACCESSIBILITY ===== */
+:focus-visible {
+  outline: 2px solid var(--accent-bright, #0080ff);
+  outline-offset: 2px;
+}
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 1000;
+  padding: 8px 16px;
+  background: var(--accent-bright, #0080ff);
+  color: #000;
+  font-weight: 600;
+  font-size: .875rem;
+  border-radius: 0 0 6px 6px;
+  text-decoration: none;
+  transition: top .2s;
+}
+.skip-link:focus { top: 0; }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 700px) {

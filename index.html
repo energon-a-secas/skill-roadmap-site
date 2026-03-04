@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Skill Map — Learning Path Builder</title>
-<meta name="description" content="Map your skills, milestones, and learning paths as a visual grid with typed connections. Dependency locking included. No install, saves locally.">
-<meta property="og:title" content="Skill Map — Visual Learning Path Builder">
+<title>Skill Map: Learning Path Builder</title>
+<meta name="description" content="Map skills, milestones, and learning paths on a visual grid with typed connections and dependency locking. No install, saves locally">
+<meta property="og:title" content="Skill Map: Visual Learning Path Builder">
 <meta property="og:description" content="Map skills and learning paths as a grid with typed connections and dependency locking. No install.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://skillmap.neorgon.com/">
 <meta property="og:site_name" content="Neorgon">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Skill Map — Visual Learning Path Builder">
+<meta name="twitter:title" content="Skill Map: Visual Learning Path Builder">
 <meta name="twitter:description" content="Map skills and learning paths as a grid with typed connections and dependency locking. No install.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://skillmap.neorgon.com/">
@@ -31,7 +31,7 @@
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "Skill Map",
-  "description": "Visually map skills, milestones, and learning paths with typed connections and dependency locking.",
+  "description": "Map skills, milestones, and learning paths with typed connections and dependency locking.",
   "url": "https://skillmap.neorgon.com/",
   "applicationCategory": "ProductivityApplication",
   "operatingSystem": "Any",
@@ -43,6 +43,7 @@
 <body>
 <div id="app">
 
+  <a class="skip-link" href="#body">Skip to content</a>
   <!-- HEADER -->
   <header id="header">
     <div id="header-logo">
@@ -59,11 +60,11 @@
       Auto-align
     </button>
     <div class="header-sep"></div>
-    <button class="btn btn-ghost" id="btn-save-json" title="Save as JSON">
+    <button class="btn btn-ghost" id="btn-save-json" title="Export diagram as JSON file">
       <i class="fa-solid fa-file-export"></i>
       Export JSON
     </button>
-    <button class="btn btn-ghost" id="btn-load-json" title="Load JSON">
+    <button class="btn btn-ghost" id="btn-load-json" title="Import diagram from JSON file">
       <i class="fa-solid fa-file-import"></i>
       Import JSON
     </button>
@@ -73,13 +74,13 @@
       <i class="fa-solid fa-file-arrow-down"></i>
       Export MD
     </button>
-    <a href="https://neorgon.com/" class="header-home" title="neorgon.com" target="_blank" rel="noopener noreferrer">
+    <a href="https://neorgon.com/" class="header-home" title="neorgon.com" aria-label="Neorgon home" target="_blank" rel="noopener noreferrer">
       <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
     </a>
   </header>
 
   <!-- BODY -->
-  <div id="body">
+  <main id="body">
 
     <!-- SIDEBAR -->
     <nav id="sidebar">
@@ -128,14 +129,14 @@
           </div>
           <div class="sidebar-section-body" style="color: var(--text-secondary); font-size: 11.5px; line-height: 1.6;">
             <p><b style="color: var(--text-primary)">Drag from node body</b> to connect</p>
-            <p><b style="color: var(--text-primary)">Or hover → click/drag port</b> circle</p>
+            <p><b style="color: var(--text-primary)">Or hover over a node</b>, then click or drag the port circle</p>
             <p><b style="color: var(--text-primary)">Click a line</b> to change its type</p>
             <p><b style="color: var(--text-primary)">Double-click text</b> to edit</p>
             <p><b style="color: var(--text-primary)">Right-click</b> node for all options</p>
             <p><b style="color: var(--text-primary)">Double-click body</b> to lock/unlock</p>
-            <p><b style="color: var(--text-primary)">Click lock icon</b> to unlock manually locked</p>
+            <p><b style="color: var(--text-primary)">Click lock icon</b> to unlock a manually locked node</p>
             <p><b style="color: var(--text-primary)">Drag handle</b> to move / reorder</p>
-            <p style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border)"><b style="color: var(--accent-bright)">Dimmed + red border</b> = has unmet requirement &nbsp;|&nbsp; <b style="color: var(--accent-bright)">lock icon</b> = manually locked</p>
+            <p style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border)"><b style="color: var(--accent-bright)">Dimmed + red border</b> means an unmet requirement. <b style="color: var(--accent-bright)">Lock icon</b> means manually locked.</p>
             <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border);">
               <div style="color: var(--text-secondary); font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 6px;">Connection types</div>
               <div class="etl-row"><span class="etl-dot" style="background:#ef4444"></span><span class="etl-name">blocks</span></div>
@@ -188,7 +189,7 @@
       </div>
     </div>
 
-  </div><!-- #body -->
+  </main><!-- #body -->
 </div><!-- #app -->
 
 <!-- CONTEXT MENU -->

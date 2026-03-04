@@ -777,7 +777,7 @@ function deleteColumn(colId) {
   if (!col) return;
   showConfirmModal(
     `Delete column "${col.name}"?`,
-    'All nodes in this column will be permanently removed.',
+    'This will permanently delete all nodes in the column.',
     () => {
       const nodeIds = state.nodes.filter(n => n.columnId === colId).map(n => n.id);
       state.edges = state.edges.filter(e => !nodeIds.includes(e.from) && !nodeIds.includes(e.to));
@@ -803,7 +803,7 @@ function addLane(colId) {
 
 function deleteLane(colId, laneId) {
   const col = state.columns.find(c => c.id === colId);
-  if (!col || col.lanes.length <= 1) { showToast('Cannot delete the only path', '⚠️'); return; }
+  if (!col || col.lanes.length <= 1) { showToast('A diagram needs at least one path', '⚠️'); return; }
   const fallback = col.lanes.find(l => l.id !== laneId);
   state.nodes.forEach(n => { if (n.columnId === colId && n.laneId === laneId) n.laneId = fallback.id; });
   col.lanes = col.lanes.filter(l => l.id !== laneId);
@@ -1278,7 +1278,7 @@ function finishConnection(targetNodeId) {
   // Create with default type immediately — no modal
   createEdge(sourceNodeId, targetNodeId, defaultEdgeType);
   const def = EDGE_TYPE_DEFS.find(d => d.type === defaultEdgeType);
-  showToast(`${def.icon} ${def.label} connection created — click the line to change type`, '🔗', 3000);
+  showToast(`${def.icon} ${def.label} connection created. Click the line to change type`, '🔗', 3000);
 }
 
 function createEdge(fromId, toId, type) {
@@ -1772,7 +1772,7 @@ function openAddMarkerModal() {
         <div class="ctx-marker-row" style="gap:8px;flex-wrap:wrap;">${iconOptions}</div>
       </div>
       <div class="form-group">
-        <label class="form-label">Label / Explanation</label>
+        <label class="form-label">Label</label>
         <input type="text" id="new-marker-label" placeholder="e.g. Needs QA sign-off" class="form-input" />
       </div>`,
     actions: [
@@ -1989,13 +1989,13 @@ function newDiagram() {
 
   function showStep2() {
     buildModal('Choose Template', [
-      makeCard('📋', 'Skill Roadmap', 'Stages, milestones and typed connections for learning paths', () => {
+      makeCard('📋', 'Skill Roadmap', 'Plan learning paths with stages, milestones, and typed connections', () => {
         closeModal();
         state = defaultState();
         saveState(); syncTitleInput(); renderAll();
         showToast('Roadmap template loaded', '📋');
       }),
-      makeCard('⚔️', 'Game Skills Map', 'Tiered skill tree with icon cards — edit then customise', () => {
+      makeCard('⚔️', 'Game Skills Map', 'Tiered skill tree with icon cards. Edit and customize.', () => {
         closeModal();
         state = gameSkillsState();
         saveState(); syncTitleInput(); renderAll();
@@ -2006,12 +2006,12 @@ function newDiagram() {
 
   function showStep1() {
     buildModal('New Diagram', [
-      makeCard('📋', 'From Template', 'Start from a pre-built layout', showStep2),
-      makeCard('✨', 'Start Blank', 'Empty canvas — build your own structure from scratch', () => {
+      makeCard('📋', 'From Template', 'Pick a ready-made roadmap or skill tree', showStep2),
+      makeCard('✨', 'Start Blank', 'Empty canvas. Build your own structure.', () => {
         closeModal();
         state = blankState();
         saveState(); syncTitleInput(); renderAll();
-        showToast('Blank canvas ready!', '✨');
+        showToast('Blank canvas ready', '✨');
       }),
     ], null);
   }
