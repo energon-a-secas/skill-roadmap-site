@@ -53,5 +53,9 @@
       "Bash(git push --force:*)",
       "Bash(git reset --hard:*)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "context7"
+  ],
+  "enableAllProjectMcpServers": true
 }
