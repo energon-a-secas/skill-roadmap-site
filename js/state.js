@@ -1,3 +1,8 @@
+// Raw localStorage throws in private browsing, where the object exists but
+// every access raises. These wrappers return a fallback instead. Storage
+// keys and formats are unchanged, so existing saved data still loads.
+import { safeRemove, safeSet } from './neorgon-persist.js';
+
 // Convex client and state management
 import { ConvexHttpClient } from "https://esm.sh/convex@1.21.0/browser";
 
@@ -114,7 +119,7 @@ export function saveState() {
     markerLegend: state.markerLegend,
     version: 2,
   });
-  localStorage.setItem("skillTreeData", data);
+  safeSet("skillTreeData", data);
 }
 
 export function loadState() {
@@ -132,7 +137,7 @@ export function loadState() {
 }
 
 export function clearState() {
-  localStorage.removeItem("skillTreeData");
+  safeRemove("skillTreeData");
 }
 
 // ============== State Migration ==============
@@ -193,7 +198,7 @@ export function saveAuth(username, role) {
   auth.username = username;
   auth.role = role;
   auth.isAuthenticated = true;
-  localStorage.setItem("skillmap-user", JSON.stringify({ username, role }));
+  safeSet("skillmap-user", JSON.stringify({ username, role }));
 }
 
 export function loadAuth() {
@@ -216,7 +221,7 @@ export function clearAuth() {
   auth.username = null;
   auth.role = null;
   auth.isAuthenticated = false;
-  localStorage.removeItem("skillmap-user");
+  safeRemove("skillmap-user");
 }
 
 // ============== Data Lookup Helpers ==============

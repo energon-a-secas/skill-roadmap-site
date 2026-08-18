@@ -1,3 +1,12 @@
+// escHtml and debounce come from the DOM Kit (js/neorgon-dom.js). This
+// site's showToast is left alone: it creates and removes its own element
+// rather than toggling a class, which the kit's contract does not cover.
+//
+// Do not edit js/neorgon-dom.js. Edit packages/neorgon-ui/dom/ and run
+// packages/neorgon-ui/sync-dom.sh.
+import { escHtml, debounce } from './neorgon-dom.js';
+export { escHtml, debounce };
+
 // ===== UI Utilities =====
 
 export function toggleSection(sectionId) {
@@ -42,26 +51,7 @@ export function showToast(message, type = 'info', duration = 3000) {
   return toast;
 }
 
-export function escHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
 
-export function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
 
 // ===== Modal System =====
 
