@@ -22,6 +22,10 @@ export function showToast(message, type = 'info', duration = 3000) {
   const container = document.getElementById('toast-container');
   const toast = document.createElement('div');
   toast.className = `toast toast-${type}`;
+  // Announced by screen readers. Without these the toast is
+  // invisible to anyone not looking at that corner of the screen.
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
   toast.textContent = message;
 
   container.appendChild(toast);
