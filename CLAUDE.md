@@ -1,4 +1,4 @@
-# Skill Roadmap Builder — Project Guide
+# Skill Roadmap Builder: Project Guide
 
 ## Overview
 A gamified personal skill tracker with Convex backend. Build visual skill roadmaps, track progress with XP/levels, manage streaks, and earn achievement badges.
@@ -29,15 +29,15 @@ Run `make dev` and `make serve` in separate terminals for local development.
 ### Convex Backend
 
 **API modules:**
-- `convex/auth.ts` - register, login, getRole, setRole (simple hash auth)
-- `convex/roadmaps.ts` - list, get, save, delete (user roadmaps)
-- `convex/shareLinks.ts` - create, getByToken, disable (shareable links)
-- `convex/gamification.ts` - skills, sessions, streaks, badges, XP tracking
-- `convex/schema.ts` - Database schema with 11 tables
+- `convex/auth.ts`: register, login, getRole, setRole (simple hash auth)
+- `convex/roadmaps.ts`: list, get, save, delete (user roadmaps)
+- `convex/shareLinks.ts`: create, getByToken, disable (shareable links)
+- `convex/gamification.ts`: skills, sessions, streaks, badges, XP tracking
+- `convex/schema.ts`: Database schema with 11 tables
 
 **Deployment:** Dev deployment at `tremendous-spoonbill-534.convex.cloud` (see `.env.local`)
 
-**Frontend client:** ESM CDN import (`https://esm.sh/convex@1.21.0/browser`) - no build step required.
+**Frontend client:** ESM CDN import (`https://esm.sh/convex@1.21.0/browser`). No build step required.
 
 ### Frontend
 
@@ -76,7 +76,7 @@ js/
 
 Roadmap JSON (`roadmaps.data`: columns/lanes/nodes/edges/legends) + gamification tables (Skill, Streak, Badge). Schema mirrored in `convex/schema.ts` (11 tables).
 
-**📖 Read `docs/references/data-models.md` before changing** the roadmap/gamification data layer or Convex schema — it holds the full field-by-field JSON shapes for Roadmap, Skill, Streak, and Badge.
+**📖 Read `docs/references/data-models.md` before changing** the roadmap/gamification data layer or Convex schema. It holds the full field-by-field JSON shapes for Roadmap, Skill, Streak, and Badge.
 
 ---
 
@@ -117,7 +117,7 @@ Simple username/password with non-cryptographic hash (sufficient for personal tr
 
 **CORS:** dev deployment allows localhost:8777 by default
 
-**.env.local** contains `CONVEX_DEPLOYMENT`, `CONVEX_URL`, `CONVEX_SITE_URL` — DO NOT commit to git
+**.env.local** contains `CONVEX_DEPLOYMENT`, `CONVEX_URL`, `CONVEX_SITE_URL`: DO NOT commit to git
 
 **Frontend Convex client:** Loaded via https://esm.sh/convex@1.21.0/browser (no npm build)
 
