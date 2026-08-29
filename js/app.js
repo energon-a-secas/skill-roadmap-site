@@ -2038,12 +2038,12 @@ function exportMarkdown() {
   const colorEmojis = { '#22c55e': '🟢', '#ef4444': '🔴', '#6b7280': '⚫', '#0063e5': '🔵', '#f59e0b': '🟡' };
   Object.entries(state.colorLegend).forEach(([hex, label]) => {
     const emoji = colorEmojis[hex] || '🔘';
-    lines.push(`- ${emoji} \`${hex}\` — ${label}`);
+    lines.push(`- ${emoji} \`${hex}\`: ${label}`);
   });
   lines.push('');
   lines.push('### Markers');
   Object.entries(state.markerLegend).forEach(([key, label]) => {
-    lines.push(`- [${key}] **${key}** — ${label}`);
+    lines.push(`- [${key}] **${key}**: ${label}`);
   });
   lines.push('');
 

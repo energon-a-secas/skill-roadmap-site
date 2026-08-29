@@ -1,4 +1,4 @@
-# Skill Map — Data Models & Progress (Level 2 reference)
+# Skill Map: Data Models & Progress (Level 2 reference)
 
 > Moved verbatim from `CLAUDE.md` during a progressive-disclosure pass. Read the **Data Models**
 > section before changing the roadmap/gamification data layer or the Convex schema. The
